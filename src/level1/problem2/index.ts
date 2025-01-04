@@ -8,10 +8,6 @@ export class ObjectId {
      * insert your code here
      */
 
-    
-    if (type < 0 || type > 255) {
-      throw new Error('Invalid type');
-    }
 
     this.data = Buffer.allocUnsafe(14);
 
