@@ -1,7 +1,7 @@
 export class ObjectId {
   private data: Buffer;
-  private static random = Math.floor(Math.random() * 0x7fffffff);
-  private static counter = Math.floor(Math.random() * 0xffffff);
+  private static random = Math.floor(Math.random() * 0x7fffffff); // 4 bytes
+  private static counter = Math.floor(Math.random() * 0xffffff); // 3 bytes
 
   constructor(type: number, timestamp: number) {
     /**
