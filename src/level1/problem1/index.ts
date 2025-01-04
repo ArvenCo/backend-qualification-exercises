@@ -2,6 +2,14 @@ export type Value = string | number | boolean | null | undefined |
   Date | Buffer | Map<unknown, unknown> | Set<unknown> |
   Array<Value> | { [key: string]: Value };
 
+function isObjectOfValues(value: unknown): value is { [key: string]: unknown } {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isArrayOfValues(value: unknown): value is Array<Value> {
+  return Array.isArray(value);
+}
+
 /**
  * Transforms JavaScript scalars and objects into JSON
  * compatible objects.
@@ -39,6 +47,18 @@ export function serialize(value: Value): unknown {
       __v: Array.from(value)
     }
   }
+
+  if (isObjectOfValues(value)){
+    const obj: { [key: string]: unknown } = {};
+    for (const key in value) {
+      obj[key] = serialize(value[key]);
+    }
+    return obj;
+  }
+
+  if (isArrayOfValues(value)){
+    return value.map(serialize);
+  }
   
   
   return value;
@@ -69,6 +89,18 @@ export function deserialize<T = unknown>(value: unknown): T {
 
     if (__t === 'Map'){
       return new Map(__v as [unknown, unknown][]) as unknown as T;
+    }
+
+    if (isObjectOfValues(value)){
+      const obj: { [key: string]: unknown } = {};
+      for (const key in value) {
+        obj[key] = deserialize(value[key]);
+      }
+      return obj as unknown as T;
+    }
+  
+    if (isArrayOfValues(value)){
+      return value.map(deserialize) as unknown as T;
     }
 
   }
